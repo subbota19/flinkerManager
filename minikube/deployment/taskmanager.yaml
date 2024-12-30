@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: taskmanager
+spec:
+  selector:
+    matchLabels:
+      app: flink
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: task
+    spec:
+      containers:
+        - name: task
+          image: flink:1.16.3-scala_2.12
+          workingDir: /opt/flink
+          args: ["taskmanager"]
+          ports:
+            - containerPort: 6121
+              name: data
+            - containerPort: 6122
+              name: rpc
+            - containerPort: 6125
+              name: query
+          livenessProbe:
+            tcpSocket:
+              port: 6122
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          env:
+            - name: JOB_MANAGER_RPC_ADDRESS
+              value: jobmanager
