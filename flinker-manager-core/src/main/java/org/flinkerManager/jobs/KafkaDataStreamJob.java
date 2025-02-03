@@ -2,27 +2,23 @@ package org.flinkerManager.jobs;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestartStrategyOptions;
-import org.apache.flink.connector.kafka.source.KafkaSource;
-import org.apache.flink.connector.kafka.sink.KafkaSink;
 import org.apache.flink.connector.kafka.sink.KafkaRecordSerializationSchema;
-import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.connector.kafka.sink.KafkaSink;
+import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.util.Collector;
+import org.flinkerManager.models.BenchmarkMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.flinkerManager.models.BenchmarkMessage;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class KafkaDataStreamJob {
@@ -58,20 +54,24 @@ public class KafkaDataStreamJob {
                 "Kafka Source");
 
 
-        DataStream<BenchmarkMessage> parsedStream = stream.map(value -> {
-            ObjectMapper objectMapper = new ObjectMapper();
+        DataStream<BenchmarkMessage> parsedStream = stream.flatMap(new FlatMapFunction<String, BenchmarkMessage>() {
 
-            try {
-                LOG.info("Kafka Message");
-                BenchmarkMessage message = objectMapper.readValue(value, BenchmarkMessage.class);
-                LOG.info("Parsed Message: " + message);
-                return message;
-            } catch (JsonParseException e) {
-                LOG.error("JSON parsing error for message: {}", value, e);
-                return null;
-            } catch (Exception e) {
-                LOG.error("Unexpected error for message: {}", value, e);
-                return null;
+            @Override
+            public void flatMap(String value, Collector<BenchmarkMessage> out) {
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                try {
+                    LOG.info("Kafka Message");
+                    BenchmarkMessage message = objectMapper.readValue(value, BenchmarkMessage.class);
+                    LOG.info("Parsed Message: " + message);
+                    if (!message.isEmpty()) {
+                        out.collect(message);
+                    }
+                } catch (JsonParseException e) {
+                    LOG.error("JSON parsing error for message: {}", value, e);
+                } catch (Exception e) {
+                    LOG.error("Unexpected error for message: {}", value, e);
+                }
             }
         }).filter(Objects::nonNull);
 

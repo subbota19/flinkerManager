@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BenchmarkMessage {
     @JsonProperty("id")
-    private long id;
+    private Long id;
 
     @JsonProperty("type")
     private String type;
@@ -17,12 +17,12 @@ public class BenchmarkMessage {
     private String datetime;
 
     @JsonProperty("process_id")
-    private long processId;
+    private Long processId;
 
     @JsonProperty("client_id")
-    private long clientId;
+    private Long clientId;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -54,7 +54,7 @@ public class BenchmarkMessage {
         this.datetime = datetime;
     }
 
-    public long getProcessId() {
+    public Long getProcessId() {
         return processId;
     }
 
@@ -62,7 +62,7 @@ public class BenchmarkMessage {
         this.processId = processId;
     }
 
-    public long getClientId() {
+    public Long getClientId() {
         return clientId;
     }
 
@@ -72,13 +72,10 @@ public class BenchmarkMessage {
 
     @Override
     public String toString() {
-        return "BenchmarkMessage{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", message='" + message + '\'' +
-                ", datetime=" + datetime +
-                ", processId=" + processId +
-                ", clientId=" + clientId +
-                '}';
+        return "BenchmarkMessage{" + "id=" + id + ", type='" + type + '\'' + ", message='" + message + '\'' + ", datetime=" + datetime + ", processId=" + processId + ", clientId=" + clientId + '}';
+    }
+
+    public Boolean isEmpty() {
+        return (id == null && type == null && message == null && datetime == null && processId == null && clientId == null);
     }
 }

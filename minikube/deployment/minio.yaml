@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:latest
+          command:
+            - /bin/bash
+            - -c
+          args:
+            - minio
+            - server
+            - /data
+            - --console-address
+            - ":9001"
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+          environment:
+            - name: MINIO_ROOT_USER
+              value: "ADMIN"
+            - name: MINIO_ROOT_PASSWORD
+              value: "12345678"
+          volumeMounts:
+            - name: minio-data
+              mountPath: /data
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-pvc
