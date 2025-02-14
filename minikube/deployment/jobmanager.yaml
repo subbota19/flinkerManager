@@ -6,18 +6,27 @@ spec:
   selector:
     matchLabels:
       app: flink
+      component: jobmanager
   replicas: 1
   template:
     metadata:
       labels:
         app: flink
-        component: master
+        component: jobmanager
     spec:
       containers:
-        - name: master
-          image: flink:1.16.3-scala_2.12
+        - name: jobmanager
+          image: flink:latest
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: JOB_MANAGER_RPC_ADDRESS
+              value: jobmanager
           workingDir: /opt/flink
-          args: ["jobmanager"]
+          args: [ "jobmanager" ]
           ports:
             - containerPort: 6123
               name: rpc
@@ -27,6 +36,27 @@ spec:
               name: query
             - containerPort: 6126
               name: ui
-          env:
-            - name: JOB_MANAGER_RPC_ADDRESS
-              value: jobmanager
+          livenessProbe:
+            tcpSocket:
+              port: 6123
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          volumeMounts:
+            - name: flink-config-volume
+              mountPath: /opt/flink/conf
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "1"
+      volumes:
+        - name: flink-config-volume
+          configMap:
+            name: flink-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+              - key: log4j-console.properties
+                path: log4j-console.properties

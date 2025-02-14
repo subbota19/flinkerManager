@@ -16,4 +16,4 @@ spec:
       nodePort: 30900
   selector:
     app: flink
-    component: master
+    component: jobmanager
