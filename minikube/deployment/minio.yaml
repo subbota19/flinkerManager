@@ -15,11 +15,7 @@ spec:
       containers:
         - name: minio
           image: minio/minio:latest
-          command:
-            - /bin/bash
-            - -c
           args:
-            - minio
             - server
             - /data
             - --console-address
@@ -27,7 +23,7 @@ spec:
           ports:
             - containerPort: 9000
             - containerPort: 9001
-          environment:
+          env:
             - name: MINIO_ROOT_USER
               value: "ADMIN"
             - name: MINIO_ROOT_PASSWORD
@@ -45,11 +41,11 @@ spec:
           readinessProbe:
             httpGet:
               path: /minio/health/ready
-              port: 9000
+              port: 9001
           livenessProbe:
             httpGet:
               path: /minio/health/live
-              port: 9000
+              port: 9001
       volumes:
         - name: minio-data
           persistentVolumeClaim:

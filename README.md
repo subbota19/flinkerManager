@@ -17,3 +17,8 @@
 
 `./bin/flink run -detached <path to JAR>`
 
+## Mount Processes
+
+`minikube mount /home/yauheni/main/codeDomain/flinkerManager/mount/plugins:/mnt/data/flink/plugins`
+
+`minikube mount /home/yauheni/main/codeDomain/flinkerManager/mount/plugins:/mnt/target`

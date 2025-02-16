@@ -34,8 +34,8 @@ spec:
           volumeMounts:
             - name: flink-config-volume
               mountPath: /opt/flink/conf/
-            - name: job-artifacts-volume
-              mountPath: /opt/flink/usrlib
+            - name: flink-plugin-volume
+              mountPath: /opt/flink/plugins/flink-s3-fs-hadoop
           resources:
             requests:
               memory: "1Gi"
@@ -52,6 +52,6 @@ spec:
                 path: config.yaml
               - key: log4j-console.properties
                 path: log4j-console.properties
-        - name: job-artifacts-volume
-          hostPath:
-            path: /mnt/target
+        - name: flink-plugin-volume
+          persistentVolumeClaim:
+            claimName: flinkplugin-pvc

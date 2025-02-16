@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: minio-pvc
+  name: nessie-pvc
   labels:
-    app: minio
+    app: nessie
 spec:
   storageClassName: manual
   accessModes:

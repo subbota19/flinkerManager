@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nessie
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nessie
+  template:
+    metadata:
+      labels:
+        app: nessie
+    spec:
+      containers:
+        - name: nessie
+          image: ghcr.io/projectnessie/nessie:latest
+          env:
+            - name: QUARKUS_HTTP_PORT
+              value: "19120"
+          ports:
+            - containerPort: 19120
+          volumeMounts:
+            - mountPath: /data/nessie
+              name: nessie-data
+      volumes:
+        - name: nessie-data
+          persistentVolumeClaim:
+            claimName: nessie-pvc
