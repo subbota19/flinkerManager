@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: taskmanager
-          image: flink:latest
+          image: custom_flink:1.20.0
+          imagePullPolicy: Never
           workingDir: /opt/flink
           args: [ "taskmanager" ]
           ports:
@@ -34,8 +35,8 @@ spec:
           volumeMounts:
             - name: flink-config-volume
               mountPath: /opt/flink/conf/
-            - name: flink-plugin-volume
-              mountPath: /opt/flink/plugins/flink-s3-fs-hadoop
+            - name: flink-jars-volume
+              mountPath: /opt/flink/examples/jars/
           resources:
             requests:
               memory: "1Gi"
@@ -52,6 +53,6 @@ spec:
                 path: config.yaml
               - key: log4j-console.properties
                 path: log4j-console.properties
-        - name: flink-plugin-volume
-          persistentVolumeClaim:
-            claimName: flinkplugin-pvc
+        - name: flink-jars-volume
+          hostPath:
+            path: /mnt/data/flink/utils/jars

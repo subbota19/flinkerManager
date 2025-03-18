@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: flinkplugin-pvc
+  name: flinkutil-pvc
 spec:
   storageClassName: local-storage
   accessModes:

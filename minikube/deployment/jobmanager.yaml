@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: jobmanager
-          image: flink:latest
+          image: custom_flink:1.20.0
+          imagePullPolicy: Never
           env:
             - name: POD_IP
               valueFrom:
