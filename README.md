@@ -1,5 +1,16 @@
 # FlinkerManager
 
+This project serves as a personal lab for developing and honing skills in distributed data processing and data lake architecture:
+
+* Flink Cluster Experimentation: To establish a Flink cluster on Minikube and explore the impact of varying configurations and workloads. I'm mostly following the official Flink Kubernetes [docs](https://nightlies.apache.org/flink/flink-docs-master/docs/deployment/resource-providers/standalone/kubernetes/).
+* Data Lake Implementation: To construct a basic data lake utilizing Apache Iceberg, enabling data ingestion via Flink and subsequent querying with open-source query engines.
+* Transactional Catalog: To gain experience with data version control using Nessie catalog.
+* Kafka Integration: To integrate an existing Kafka cluster as a data source simulating real-time data ingestion.
+
+[Kafka project](https://github.com/subbota19/kafkaInfra)
+
+[Event Stream Generation project](https://github.com/subbota19/msgGeneratorKafka)
+
 ## Construct project skeleton
 
 `mvn archetype:generate
@@ -19,9 +30,7 @@
 
 ## Mount Processes
 
-I've found that new Flink plugins/libs are sometimes necessary. In my project, instead of creating a custom Flink image,
-I
-opted for the standard one. To add plugins/libs, I set up a Minikube mount and connected it to the Flink cluster. All
+I've found that new Flink plugins/libs are sometimes necessary. One method to add is to use minikube mount, connecting it to the Flink cluster. All
 additional plugins/libs are stored at /mount. To build the TaskManager pod correctly, activate the mount with this
 command:
 
@@ -66,12 +75,22 @@ For pushing image:
 
 `docker push subbota19/custom_flink:latest`
 
+### Rationale:
+
+This custom Flink Docker image is built to provide a flexible development environment. By building a custom image, you gain the ability to:
+
+* Installing tools for easy troubleshooting and checking connectivity between pods in CLI.
+* Add Java libraries directly into the image for specific application requirements.
+
 ## Check UI
 
 Provide minikube IP
 
-Flink cluster: http://192.168.49.2:30900
-MiniO: http://192.168.49.2:30801/
+* Flink cluster: http://{minikube ip}:30900
+
+* MiniO: http://{minikube ip}:30801
+
+* Nessie: http://{minikube ip}:30920
 
 ## Check specific class in JAR
 
@@ -88,6 +107,8 @@ MiniO: http://192.168.49.2:30801/
 `./bin/flink run -c org.flinkerManager.jobs.NessieFlinkJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar`
 
 ## Flink configuration
+
+**flink-configuration-configmap.yaml** is a custom YAML config file for Flink cluster parameters. Please modify it if you require a custom setup:
 
     env.hadoop.conf.dir: /opt/hadoop/hadoop-3.4.1/etc/hadoop
 
