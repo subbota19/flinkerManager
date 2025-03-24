@@ -47,3 +47,20 @@ nessie-update:
 nessie-delete:
 	kubectl delete -f minikube/service/nessie.yaml
 	kubectl delete -f minikube/deployment/nessie.yaml
+
+postgres-up:
+	kubectl create -f minikube/persistent-volume-claim/postgres.yaml
+	kubectl create -f minikube/persistent-volume/postgres.yaml
+	kubectl create -f minikube/service/postgres.yaml
+	kubectl create -f minikube/deployment/postgres.yaml
+	kubectl create -f minikube/service/pgadmin.yaml
+	kubectl create -f minikube/deployment/pgadmin.yaml
+postgres-update:
+	kubectl apply -f minikube/service/postgres.yaml
+	kubectl create -f minikube/service/pgadmin.yaml
+	kubectl apply -f minikube/deployment/postgres.yaml
+	kubectl create -f minikube/deployment/pgadmin.yaml
+
+postgres-delete:
+	kubectl delete -f minikube/service/postgres.yaml
+	kubectl delete -f minikube/deployment/postgres.yaml
