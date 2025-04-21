@@ -11,6 +11,7 @@ spec:
       protocol: TCP
       port: 9000
       targetPort: 9000
+      nodePort: 30800
     - name: webui
       protocol: TCP
       port: 9001

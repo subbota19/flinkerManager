@@ -58,6 +58,10 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder removeTable(String tableName) {
+        query.append("DROP TABLE IF EXISTS ").append(tableName).append(";\n");
+        return this;
+    }
 
     private static Map<String, String> getFieldMappings(Class<?> modelClass) {
         Map<String, String> fieldMappings = new LinkedHashMap<>();

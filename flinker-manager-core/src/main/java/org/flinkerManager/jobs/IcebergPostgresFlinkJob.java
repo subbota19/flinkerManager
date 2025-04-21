@@ -53,6 +53,7 @@ public class IcebergPostgresFlinkJob {
                 .useCatalog("iceberg_catalog")
                 .createDatabase("raw_zone")
                 .useDatabase("raw_zone")
+                .removeTable("benchmark_message")
                 .createTableFromModel("benchmark_message", BenchmarkMessage.class);
 
 

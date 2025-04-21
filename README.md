@@ -61,7 +61,7 @@ For building the custom image do the next steps:
 
 `docker build --tag custom_flink .`
 
-`minikube image load custom_flink:latest`
+`minikube image load custom_flink:1.20.0`
 
 and don't forgot to include:
 
@@ -86,11 +86,11 @@ This custom Flink Docker image is built to provide a flexible development enviro
 
 Provide minikube IP
 
-* Flink cluster: http://{minikube ip}:30900
+* Flink cluster: `http://{minikube ip}:30900`
 
-* MiniO: http://{minikube ip}:30801
+* MiniO: `http://{minikube ip}:30801`
 
-* Nessie: http://{minikube ip}:30920
+* Nessie: `http://{minikube ip}:30920`
 
 ## Check specific class in JAR
 
@@ -104,7 +104,7 @@ Provide minikube IP
 
 ## Run job on the cluster
 
-`./bin/flink run -c org.flinkerManager.jobs.NessieFlinkJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar`
+`./bin/flink run -c org.flinkerManager.jobs.KafkaIcebergDataStreamJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar`
 
 ## Flink configuration
 
@@ -117,3 +117,12 @@ Provide minikube IP
 `mc mb minio/warehouse;`
 
 `mc anonymous set public minio/warehouse;`
+
+## Verify minikube RAM/CPU consumption
+
+`docker stats minikube`
+
+## Adjust minikube RAM/CPU
+
+`minikube config set memory 8000`
+`minikube config set cpus 2`

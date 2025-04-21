@@ -58,6 +58,12 @@ under the License.
         <!-- These dependencies are provided, because they should not be packaged into the JAR file. -->
         <dependency>
             <groupId>org.apache.flink</groupId>
+            <artifactId>flink-s3-fs-hadoop</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java</artifactId>
             <version>${flink.version}</version>
             <scope>provided</scope>
@@ -269,7 +275,7 @@ under the License.
                                     <!--                                    <mainClass>org.flinkerManager.jobs.TestJob</mainClass>-->
                                     <!--                                    <mainClass>org.flinkerManager.jobs.NessieFlinkJob</mainClass>-->
                                     <!--                                    <mainClass>org.flinkerManager.jobs.S3FlinkJob</mainClass>-->
-                                    <mainClass>org.flinkerManager.jobs.NessieFlinkJob</mainClass>
+                                    <mainClass>org.flinkerManager.jobs.KafkaIcebergDataStreamJob</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

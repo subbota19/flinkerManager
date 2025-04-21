@@ -57,10 +57,12 @@ postgres-up:
 	kubectl create -f minikube/deployment/pgadmin.yaml
 postgres-update:
 	kubectl apply -f minikube/service/postgres.yaml
-	kubectl create -f minikube/service/pgadmin.yaml
+	kubectl apply -f minikube/service/pgadmin.yaml
 	kubectl apply -f minikube/deployment/postgres.yaml
-	kubectl create -f minikube/deployment/pgadmin.yaml
+	kubectl apply -f minikube/deployment/pgadmin.yaml
 
 postgres-delete:
 	kubectl delete -f minikube/service/postgres.yaml
 	kubectl delete -f minikube/deployment/postgres.yaml
+	kubectl delete -f minikube/service/pgadmin.yaml
+	kubectl delete -f minikube/deployment/pgadmin.yaml
