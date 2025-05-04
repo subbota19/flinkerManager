@@ -17,9 +17,15 @@ spec:
           image: dpage/pgadmin4
           env:
             - name: PGADMIN_DEFAULT_EMAIL
-              value: "admin@admin.com"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: admin_email
             - name: PGADMIN_DEFAULT_PASSWORD
-              value: ADMIN
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: admin_password
             - name: PGADMIN_PORT
               value: "80"
           ports:

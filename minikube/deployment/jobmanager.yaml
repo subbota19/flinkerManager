@@ -26,6 +26,16 @@ spec:
                   fieldPath: status.podIP
             - name: JOB_MANAGER_RPC_ADDRESS
               value: jobmanager
+            - name: JDBC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: user
+            - name: JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
           workingDir: /opt/flink
           args: [ "jobmanager" ]
           ports:
