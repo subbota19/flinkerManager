@@ -1,0 +1,14 @@
+CREATE EXTERNAL CATALOG 'datalake'
+COMMENT "External catalog to Apache Iceberg on MinIO"
+PROPERTIES
+(
+  "type"="iceberg",
+  "iceberg.catalog.type"="rest",
+  "iceberg.catalog.uri"="http://192.168.49.2:30910/iceberg",
+  "iceberg.catalog.warehouse"="datalake",
+  "aws.s3.access_key"="ADMIN",
+  "aws.s3.secret_key"="12345678",
+  "aws.s3.endpoint"="http://192.168.49.2:30800",
+  "aws.s3.enable_path_style_access"="true",
+  "client.factory"="com.starrocks.connector.share.iceberg.IcebergAwsClientFactory"
+);
