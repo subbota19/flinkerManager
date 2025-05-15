@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gravitino
+  namespace: datalakehouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gravitino
+  template:
+    metadata:
+      labels:
+        app: gravitino
+    spec:
+      containers:
+        - name: gravitino
+          image: custom_gravitino:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 9010

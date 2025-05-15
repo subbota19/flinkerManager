@@ -2,6 +2,7 @@
 
 all:
 	@echo "Please check Makefile"
+
 flink-up:
 	kubectl create --save-config -f minikube/persistent-volume-claim/flink.yaml
 	kubectl create --save-config -f minikube/persistent-volume/flink.yaml
@@ -66,3 +67,42 @@ postgres-delete:
 	kubectl delete -f minikube/deployment/postgres.yaml
 	kubectl delete -f minikube/service/pgadmin.yaml
 	kubectl delete -f minikube/deployment/pgadmin.yaml
+
+namespace-update:
+	kubectl apply -f minikube/namespace/datalakehouse.yaml
+	kubectl apply -f minikube/namespace/query.yaml
+
+namespace-create:
+	kubectl create -f minikube/namespace/datalakehouse.yaml
+	kubectl create -f minikube/namespace/query.yaml
+
+namespace-delete:
+	kubectl delete -f minikube/namespace/datalakehouse.yaml
+	kubectl delete -f minikube/namespace/query.yaml
+
+
+grav-update:
+	kubectl apply -f minikube/deployment/gravitino.yaml
+	kubectl apply -f minikube/service/gravitino.yaml
+
+grav-create:
+	kubectl create -f minikube/deployment/gravitino.yaml
+	kubectl create -f minikube/service/gravitino.yaml
+
+grav-delete:
+	kubectl delete -f minikube/deployment/gravitino.yaml
+	kubectl delete -f minikube/service/gravitino.yaml
+
+starrocks-create:
+	kubectl apply -f https://raw.githubusercontent.com/StarRocks/starrocks-kubernetes-operator/main/deploy/starrocks.com_starrocksclusters.yaml
+	kubectl create -f minikube/operator/starrocks.yaml
+	kubectl create -f minikube/custom-kind/starrocks.yaml
+
+starrocks-update:
+	kubectl apply -f minikube/custom-kind/starrocks.yaml
+
+starrocks-delete:
+	kubectl delete -f minikube/custom-kind/starrocks.yaml
+
+
+

@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: flink-config
+  namespace: datalakehouse
   labels:
     app: flink
 data:

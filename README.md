@@ -131,17 +131,29 @@ you require a custom setup:
 
 ## Adjust minikube RAM/CPU
 
-`minikube config set memory 8000`
+`minikube config set memory 10000`
 `minikube config set cpus 2`
 
 ## Secret manager
 
-`kubectl create secret generic postgres-secret \
+`kubectl create secret generic postgres-secret -n datalakehouse \
 --from-literal=user=postgres \
 --from-literal=password=postgres \
 --from-literal=admin_password=ADMIN \
 --from-literal=admin_email=admin@admin.com`
 
-`kubectl create secret generic minio-secret \
+`kubectl create secret generic minio-secret -n datalakehouse \
 --from-literal=user=ADMIN \
 --from-literal=password=12345678`
+
+## Gravitino API endpoints
+
+`{host}:{port}/iceberg/v1/namespaces/raw_zone/tables/benchmark_message`
+
+## Gravitino commands
+
+`./bin/gravitino-iceberg-rest-server.sh start --confing /root/gravitino-iceberg-rest-server/conf/gravitino-iceberg-rest-server.conf`
+
+## Validate gravitino incoming HTTP requests
+
+`tcpdump -i any -A port 9010`
