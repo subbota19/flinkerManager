@@ -157,3 +157,7 @@ you require a custom setup:
 ## Validate gravitino incoming HTTP requests
 
 `tcpdump -i any -A port 9010`
+
+## Flink SQL
+
+`./bin/sql-client.sh -Daws.accessKeyId=ADMIN -Daws.secretAccessKey=12345678 -Daws.region=us-east-1`

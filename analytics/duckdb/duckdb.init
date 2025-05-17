@@ -18,5 +18,5 @@ SET unsafe_enable_version_guessing = true;
 SELECT * FROM iceberg_metadata('s3://datalake/raw_zone/benchmark_message', allow_moved_paths = true);
 
 
-SELECT * FROM iceberg_snapshots('s3://datalake/raw_zone/benchmark_message')
+SELECT * FROM iceberg_snapshots('s3://datalake/raw_zone/benchmark_message');
 

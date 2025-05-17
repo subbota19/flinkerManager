@@ -1,0 +1,35 @@
+CREATE CATALOG datalake
+    WITH (
+      'type'='iceberg',
+       'catalog-impl'='org.apache.iceberg.jdbc.JdbcCatalog',
+       'io-impl'='org.apache.iceberg.aws.s3.S3FileIO',
+       'uri'='jdbc:postgresql://postgres:5432/postgres',
+       'jdbc.driver'='org.postgresql.Driver',
+       'jdbc.user'='postgres',
+       'jdbc.password'='postgres',
+       'warehouse'='s3://datalake',
+       's3.endpoint'='http://minio:9000',
+       's3.path-style-access'='true',
+       'client.region'='us-east-1'
+);
+
+USE CATALOG datalake;
+
+CREATE DATABASE raw_zone;
+
+USE raw_zone;
+
+CREATE TABLE benchmark_message_test
+(
+    id bigint,
+    type string,
+    message string,
+    datetime string,
+    processId bigint,
+    clientId bigint
+ )
+ WITH (
+    'format-version' = '2'
+ );
+
+ DROP TABLE benchmark_message_test;
