@@ -1,4 +1,4 @@
-package org.flinkerManager.jobs;
+package org.flinkerManager.archive.jobs;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;

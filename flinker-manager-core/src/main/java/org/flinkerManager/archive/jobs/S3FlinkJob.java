@@ -1,4 +1,4 @@
-package org.flinkerManager.jobs;
+package org.flinkerManager.archive.jobs;
 
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestartStrategyOptions;

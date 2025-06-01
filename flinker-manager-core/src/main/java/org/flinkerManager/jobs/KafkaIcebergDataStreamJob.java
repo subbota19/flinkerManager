@@ -1,6 +1,8 @@
 package org.flinkerManager.jobs;
 
+import com.amazonaws.services.dynamodbv2.xspec.L;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.FlatMapFunction;
@@ -12,6 +14,8 @@ import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsIni
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
+import org.apache.iceberg.catalog.Catalog;
+import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.flink.CatalogLoader;
 import org.apache.iceberg.flink.TableLoader;
@@ -21,12 +25,16 @@ import org.flinkerManager.sink.BenchmarkMessageIcebergSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
 
 public class KafkaIcebergDataStreamJob {
-    private static final long CHECKPOINT_INTERVAL = 30_000L;
+    private static final long CHECKPOINT_INTERVAL = 120_000L;
     private static final String RESTART_STRATEGY_TYPE = "fixed-delay";
     private static final String CHECKPOINT_STORAGE_TYPE = "filesystem";
     private static final String CHECKPOINTS_DIRECTORY_PATH = "s3://flink/checkpoints";
@@ -34,6 +42,9 @@ public class KafkaIcebergDataStreamJob {
     private static final int RESTART_ATTEMPTS = 2;
     private static final Duration RESTART_DELAY = Duration.ofMinutes(1);
     private static final Duration WATERMARK_BOUND_DURATION = Duration.ofSeconds(5);
+
+    private static final Duration WATERMARK_IDLENESS_DURATION = Duration.ofMinutes(1);
+    private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaIcebergDataStreamJob.class);
 
@@ -110,9 +121,29 @@ public class KafkaIcebergDataStreamJob {
                 .setValueOnlyDeserializer(new SimpleStringSchema())
                 .build();
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // WatermarkStrategy.forBoundedOutOfOrderness(WATERMARK_BOUND_DURATION),
+
+        WatermarkStrategy<String> watermarkStrategy = WatermarkStrategy
+                .<String>forBoundedOutOfOrderness(WATERMARK_BOUND_DURATION)
+                .withTimestampAssigner((record, ts) -> {
+                    try {
+
+                        LOG.info("ABC");
+
+                        JsonNode jsonNode = objectMapper.readTree(record);
+                        String eventDateTime = jsonNode.get("datetime").asText();
+                        return new SimpleDateFormat(DATETIME_FORMAT).parse(eventDateTime).toInstant().toEpochMilli();
+                    } catch (Exception e) {
+                        return System.currentTimeMillis();
+                    }
+                })
+                .withIdleness(WATERMARK_IDLENESS_DURATION);
+
         DataStream<String> stream = env.fromSource(
                 kafkaSource,
-                WatermarkStrategy.forBoundedOutOfOrderness(WATERMARK_BOUND_DURATION),
+                watermarkStrategy,
                 "Kafka Source"
         );
 
@@ -153,6 +184,9 @@ public class KafkaIcebergDataStreamJob {
                 catalogLoader,
                 tableIdentifier
         );
+
+        Catalog catalog = catalogLoader.loadCatalog();
+        LOG.info("Iceberg Table for streaming write {}", catalog.listTables(Namespace.of(rawZoneDatabase)));
 
         BenchmarkMessageRowDataMapper mapper = new BenchmarkMessageRowDataMapper();
         BenchmarkMessageIcebergSink benchmarkMessageIcebergSink = new BenchmarkMessageIcebergSink();

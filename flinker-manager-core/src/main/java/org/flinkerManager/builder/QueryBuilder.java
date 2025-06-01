@@ -31,6 +31,16 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder showDatabases() {
+        query.append("SHOW DATABASES;\n");
+        return this;
+    }
+
+    public QueryBuilder showTables() {
+        query.append("SHOW TABLES;\n");
+        return this;
+    }
+
     public QueryBuilder useDatabase(String databaseName) {
         query.append("USE ").append(databaseName).append(";\n");
         return this;

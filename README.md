@@ -39,7 +39,7 @@ it to the Flink cluster. All
 additional plugins/libs are stored at /mount. To build the TaskManager pod correctly, activate the mount with this
 command:
 
-`minikube mount /home/yauheni/main/codeDomain/flinkerManager/mount/utils:/mnt/data/flink/utils`
+`minikube mount /home/yauheni/main/codeDomain/flinkerManager/flinker-manager-core/target:/mnt/data/flink/utils/jars`
 
 Kubernetes settings
 
@@ -64,7 +64,7 @@ For building the custom image do the next steps:
 
 `cd docker/flink`
 
-`docker build --tag custom_flink .`
+`docker build --tag custom_flink:1.20.0 .`
 
 `minikube image load custom_flink:1.20.0`
 
@@ -160,4 +160,4 @@ you require a custom setup:
 
 ## Flink SQL
 
-`./bin/sql-client.sh -Daws.accessKeyId=ADMIN -Daws.secretAccessKey=12345678 -Daws.region=us-east-1`
+`./bin/sql-client.sh`

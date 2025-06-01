@@ -1,4 +1,4 @@
-CREATE CATALOG datalake
+CREATE CATALOG iceberg_catalog
     WITH (
       'type'='iceberg',
        'catalog-impl'='org.apache.iceberg.jdbc.JdbcCatalog',
@@ -10,16 +10,18 @@ CREATE CATALOG datalake
        'warehouse'='s3://datalake',
        's3.endpoint'='http://minio:9000',
        's3.path-style-access'='true',
+       's3.access-key-id'='ADMIN',
+       's3.secret-access-key'='12345678',
        'client.region'='us-east-1'
 );
 
-USE CATALOG datalake;
+USE CATALOG iceberg_catalog;
 
 CREATE DATABASE raw_zone;
 
 USE raw_zone;
 
-CREATE TABLE benchmark_message_test
+CREATE TABLE benchmark_message
 (
     id bigint,
     type string,
@@ -29,7 +31,11 @@ CREATE TABLE benchmark_message_test
     clientId bigint
  )
  WITH (
-    'format-version' = '2'
+    'format-version' = '1'
  );
 
- DROP TABLE benchmark_message_test;
+ DROP TABLE benchmark_message;
+
+ SELECT * FROM datalake.raw_zone.benchmark_message;
+
+ INSERT INTO datalake.raw_zone.benchmark_message VALUES (1, 'abc', 'abc', '2020-01-01', 1, 1);

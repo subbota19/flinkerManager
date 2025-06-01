@@ -22,7 +22,6 @@ public class BenchmarkMessageIcebergSink implements IcebergSink<BenchmarkMessage
         FlinkSink.forRowData(rowDataStream)
                 .tableLoader(tableLoader)
                 .upsert(false)
-                .equalityFieldColumns(List.of("id"))
                 .append();
     }
 }
