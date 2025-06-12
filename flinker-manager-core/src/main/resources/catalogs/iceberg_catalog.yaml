@@ -1,0 +1,7 @@
+name: "iceberg_catalog"
+type: "iceberg"
+catalog-impl: "org.apache.iceberg.jdbc.JdbcCatalog"
+io-impl: "org.apache.iceberg.aws.s3.S3FileIO"
+uri: "jdbc:postgresql://postgres:5432/postgres"
+jdbc.driver: "org.postgresql.Driver"
+warehouse: "s3://datalake"

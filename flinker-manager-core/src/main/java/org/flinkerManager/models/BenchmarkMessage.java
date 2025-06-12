@@ -1,6 +1,7 @@
 package org.flinkerManager.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.flink.table.data.TimestampData;
 
 
 public class BenchmarkMessage {
@@ -13,14 +14,16 @@ public class BenchmarkMessage {
     @JsonProperty("message")
     private String message;
 
-    @JsonProperty("datetime")
-    private String datetime;
+    @JsonProperty("rawDatetime")
+    private String rawDatetime;
 
     @JsonProperty("process_id")
     private Long processId;
 
     @JsonProperty("client_id")
     private Long clientId;
+
+    private TimestampData processedDatetime;
 
     public Long getId() {
         return id;
@@ -46,12 +49,12 @@ public class BenchmarkMessage {
         this.message = message;
     }
 
-    public String getDatetime() {
-        return datetime;
+    public String getRawDatetime() {
+        return rawDatetime;
     }
 
-    public void String(String datetime) {
-        this.datetime = datetime;
+    public void setRawDatetime(String rawDatetime) {
+        this.rawDatetime = rawDatetime;
     }
 
     public Long getProcessId() {
@@ -70,12 +73,20 @@ public class BenchmarkMessage {
         this.clientId = clientId;
     }
 
+    public TimestampData getProcessedDatetime() {
+        return processedDatetime;
+    }
+
+    public void setProcessedDatetime(TimestampData processedDatetime) {
+        this.processedDatetime = processedDatetime;
+    }
+
     @Override
     public String toString() {
-        return "BenchmarkMessage{" + "id=" + id + ", type='" + type + '\'' + ", message='" + message + '\'' + ", datetime=" + datetime + ", processId=" + processId + ", clientId=" + clientId + '}';
+        return "BenchmarkMessage{" + "id=" + id + ", type='" + type + '\'' + ", message='" + message + '\'' + ", rawDatetime=" + rawDatetime + ", processId=" + processId + ", clientId=" + clientId + ", processedDatetime=" + processedDatetime + '}';
     }
 
     public Boolean isEmpty() {
-        return (id == null && type == null && message == null && datetime == null && processId == null && clientId == null);
+        return (id == null && type == null && message == null && rawDatetime == null && processId == null && clientId == null && processedDatetime == null);
     }
 }

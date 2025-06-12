@@ -13,13 +13,14 @@ public class BenchmarkMessageRowDataMapper implements RowDataMapper<BenchmarkMes
 
     @Override
     public RowData map(BenchmarkMessage message) {
-        GenericRowData rowData = new GenericRowData(RowKind.INSERT, 6);
+        GenericRowData rowData = new GenericRowData(RowKind.INSERT, 7);
         rowData.setField(0, message.getId());
         rowData.setField(1, StringData.fromString(message.getType()));
         rowData.setField(2, StringData.fromString(message.getMessage()));
-        rowData.setField(3, StringData.fromString(message.getDatetime()));
+        rowData.setField(3, StringData.fromString(message.getRawDatetime()));
         rowData.setField(4, message.getProcessId());
         rowData.setField(5, message.getClientId());
+        rowData.setField(6, message.getProcessedDatetime());
         return rowData;
     }
 }

@@ -1,6 +1,5 @@
 package org.flinkerManager.jobs;
 
-import com.amazonaws.services.dynamodbv2.xspec.L;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +12,7 @@ import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.table.data.TimestampData;
 import org.apache.flink.util.Collector;
 import org.apache.iceberg.catalog.Catalog;
 import org.apache.iceberg.catalog.Namespace;
@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Objects;
 
@@ -129,9 +127,6 @@ public class KafkaIcebergDataStreamJob {
                 .<String>forBoundedOutOfOrderness(WATERMARK_BOUND_DURATION)
                 .withTimestampAssigner((record, ts) -> {
                     try {
-
-                        LOG.info("ABC");
-
                         JsonNode jsonNode = objectMapper.readTree(record);
                         String eventDateTime = jsonNode.get("datetime").asText();
                         return new SimpleDateFormat(DATETIME_FORMAT).parse(eventDateTime).toInstant().toEpochMilli();
@@ -152,12 +147,11 @@ public class KafkaIcebergDataStreamJob {
 
             @Override
             public void flatMap(String value, Collector<BenchmarkMessage> out) {
-
                 ObjectMapper objectMapper = new ObjectMapper();
                 try {
                     BenchmarkMessage message = objectMapper.readValue(value, BenchmarkMessage.class);
-                    LOG.info("Parsed Message: " + message);
                     if (!message.isEmpty()) {
+                        message.setProcessedDatetime(TimestampData.fromInstant(Instant.now()));
                         out.collect(message);
                     }
                 } catch (JsonParseException e) {

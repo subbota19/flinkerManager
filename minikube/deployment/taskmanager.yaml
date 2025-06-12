@@ -18,6 +18,17 @@ spec:
       containers:
         - name: taskmanager
           image: custom_flink:1.20.0
+          env:
+            - name: JDBC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: user
+            - name: JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
           imagePullPolicy: Never
           workingDir: /opt/flink
           args: [ "taskmanager" ]
@@ -38,6 +49,8 @@ spec:
               mountPath: /opt/flink/conf/
             - name: flink-jars-volume
               mountPath: /opt/flink/examples/jars/
+            - name: flink-resources-volume
+              mountPath: /opt/flink/examples/resources/
           resources:
             requests:
               memory: "1Gi"
@@ -57,3 +70,6 @@ spec:
         - name: flink-jars-volume
           hostPath:
             path: /mnt/data/flink/utils/jars
+        - name: flink-resources-volume
+          hostPath:
+            path: /mnt/data/flink/utils/resources

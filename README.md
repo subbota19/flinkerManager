@@ -41,6 +41,8 @@ command:
 
 `minikube mount /home/yauheni/main/codeDomain/flinkerManager/flinker-manager-core/target:/mnt/data/flink/utils/jars`
 
+`minikube mount /home/yauheni/main/codeDomain/flinkerManager/flinker-manager-core/src/main/resources:/mnt/data/flink/utils/resources`
+
 Kubernetes settings
 
           volumeMounts:
@@ -112,6 +114,10 @@ Provide minikube IP
 
 `./bin/flink run -c org.flinkerManager.jobs.KafkaIcebergDataStreamJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar`
 
+`./bin/flink run -c org.flinkerManager.jobs.CreateIcebergTableJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar --catalog.config.path /opt/flink/examples/resources/catalogs/iceberg_catalog.yaml --table.config.path /opt/flink/examples/resources/tables/benchmark_message_cow.yaml`
+
+`./bin/flink run -c org.flinkerManager.jobs.CreateIcebergTableJob /opt/flink/examples/jars/flinker-manager-core-1.0-SNAPSHOT.jar --catalog.config.path /opt/flink/examples/resources/catalogs/iceberg_catalog.yaml --table.config.path /opt/flink/examples/resources/tables/benchmark_message_mor.yaml`
+
 ## Flink configuration
 
 **flink-configuration-configmap.yaml** is a custom YAML config file for Flink cluster parameters. Please modify it if
@@ -161,3 +167,7 @@ you require a custom setup:
 ## Flink SQL
 
 `./bin/sql-client.sh`
+
+## Starrocks commands
+
+`kubectl exec -it starrocks-fe-0 -n query -- mysql -P 9030 -h 127.0.0.1 -u root`

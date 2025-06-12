@@ -1,4 +1,4 @@
-CREATE EXTERNAL CATALOG 'datalake'
+CREATE EXTERNAL CATALOG 'iceberg_catalog'
 COMMENT "External catalog to Apache Iceberg on MinIO"
 PROPERTIES
 (
@@ -11,10 +11,15 @@ PROPERTIES
   "aws.s3.endpoint"="http://192.168.49.2:30800",
   "aws.s3.enable_path_style_access"="true",
   "client.factory"="com.starrocks.connector.share.iceberg.IcebergAwsClientFactory",
-  "property-version"="2"
+  "property-version"="2",
+  "cache-enabled"="false"
 );
 
-CREATE TABLE benchmark_message
+SET CATALOG iceberg_catalog;
+
+USE raw_zone;
+
+CREATE TABLE benchmark_message_v2
 (
     id bigint,
     type string,
@@ -25,5 +30,7 @@ CREATE TABLE benchmark_message
  )
  ENGINE=iceberg
  PROPERTIES (
-    'format-version' = '2'
+    'format-version' = '1'
  );
+
+ DESC benchmark_message_v2;
