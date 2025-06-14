@@ -15,6 +15,10 @@ architecture:
 
 [Event Stream Generation project](https://github.com/subbota19/msgGeneratorKafka)
 
+## Architecture
+
+![image](https://github.com/user-attachments/assets/aec8ac89-76f0-4d1b-9f8f-ef19291086b5)
+
 ## Construct project skeleton
 
 `mvn archetype:generate
