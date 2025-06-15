@@ -8,9 +8,7 @@ import org.apache.iceberg.catalog.Namespace;
 import org.apache.iceberg.catalog.TableIdentifier;
 import org.apache.iceberg.types.Type;
 import org.apache.iceberg.types.Types;
-import org.flinkerManager.factory.model.ColumnDefinition;
-import org.flinkerManager.factory.model.PartitionDefinition;
-import org.flinkerManager.factory.model.TableDefinition;
+import org.flinkerManager.factory.model.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class TableCreator {
         this.definition = mapper.readValue(new File(tableYamlPath), TableDefinition.class);
     }
 
-    public void createTable(Catalog catalog) {
+    public void createTable(Catalog catalog, Boolean enabledCompaction) {
         TableIdentifier tableId = TableIdentifier.of(Namespace.of(definition.getNamespace()), definition.getName());
 
         if (!catalog.tableExists(tableId)) {
@@ -39,9 +37,29 @@ public class TableCreator {
         } else {
             System.out.printf("Table already exists: %s%n", tableId);
             Table table = catalog.loadTable(tableId);
+            CompactionDefinition compaction = definition.getCompaction();
             updateProperties(table);
             updateSchema(table);
             updatePartition(table);
+            table.expireSnapshots().commit();
+
+            if (enabledCompaction && compaction != null) {
+
+                System.out.println("Compaction enabled via YAML config. Running compaction...");
+                DataCompactionDefinition dataCompactionDefinition = compaction.getData();
+                MetadataCompactionDefinition metadataCompactionDefinition = compaction.getMetadata();
+                CompactionService compactionService = new CompactionService();
+
+                if (dataCompactionDefinition != null && dataCompactionDefinition.getEnabled()) {
+                    compactionService.compactData(table, dataCompactionDefinition);
+                }
+                if (metadataCompactionDefinition != null && metadataCompactionDefinition.getEnabled()) {
+                    compactionService.compactMetadata(table, metadataCompactionDefinition);
+                }
+
+            } else {
+                System.out.println("Compaction disabled or missing in YAML config.");
+            }
         }
     }
 
@@ -73,8 +91,7 @@ public class TableCreator {
 
         if (!isChanged) {
             System.out.println("No property changes needed.");
-        }
-        else {
+        } else {
             update.commit();
             System.out.println("Property are updated.");
         }
@@ -126,6 +143,8 @@ public class TableCreator {
         if (isChanged) {
             update.commit();
             System.out.printf("Schema updated for table %s%n", table.name());
+        } else {
+            System.out.println("No schema changes needed.");
         }
     }
 

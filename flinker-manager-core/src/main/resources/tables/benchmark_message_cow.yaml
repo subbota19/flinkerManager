@@ -18,17 +18,20 @@ schema:
     type: timestamp
 partition:
   - name: processedDatetime
-    transform: day
+    transform: hour
 properties:
   format-version: 2
   write.format.default: parquet
   write.parquet.compression-codec: zstd
-  write.update.mode: merge-on-read
-  write.delete.mode: merge-on-read
-  write.merge.mode: merge-on-read
+  write.update.mode: copy-on-write
+  write.delete.mode: copy-on-write
+  write.merge.mode: copy-on-write
   history.expire.max-snapshot-age-ms: 3600000
   history.expire.min-snapshots-to-keep: 3
   write.parquet.bloom-filter-enabled.column.clientId: true
   write.parquet.bloom-filter-fpp.column.clientId: 0.01
   write.parquet.bloom-filter-enabled.column.processId: true
   write.parquet.bloom-filter-fpp.column.processId: 0.1
+  write.metadata.delete-after-commit.enabled: true
+  write.metadata.previous-versions-max: 5
+

@@ -10,6 +10,7 @@ public class TableDefinition {
     private List<ColumnDefinition> schema;
     private List<PartitionDefinition> partition;
     private Map<String, String> properties;
+    private CompactionDefinition compaction;
 
     public TableDefinition() {
     }
@@ -52,6 +53,14 @@ public class TableDefinition {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public CompactionDefinition getCompaction() {
+        return compaction;
+    }
+
+    public void setCompaction(CompactionDefinition compaction) {
+        this.compaction = compaction;
     }
 
 

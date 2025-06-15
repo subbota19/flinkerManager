@@ -12,11 +12,12 @@ public class CreateIcebergTableJob {
 
         String catalogYamlPath = params.getRequired("catalog.config.path");
         String tableYamlPath = params.getRequired("table.config.path");
+        Boolean enabledCompaction = Boolean.parseBoolean(params.get("table.config.compaction", "false"));
 
         CatalogCreator catalogCreator = new CatalogCreator(catalogYamlPath);
         Catalog catalog = catalogCreator.loadCatalog();
 
         TableCreator tableCreator = new TableCreator(tableYamlPath);
-        tableCreator.createTable(catalog);
+        tableCreator.createTable(catalog, enabledCompaction);
     }
 }
